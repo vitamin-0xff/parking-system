@@ -58,7 +58,7 @@ To run the tests, use the following command:
 - The project uses Gradle for dependency management and building.
 - The project uses Docker for running the databases in a containerized environment.
 - The project uses `springdoc-openapi` to generate API documentation. You can access the Swagger UI at `http://localhost:8080/swagger-ui.html`.
-- The project is divided into features, and each feature should follow the layered architecture described in the "Feature Structure" section. The `client`, `parking_spot`, `country`, `city`, `place`, `parking`, and `entry_gate` features serve as good examples of this structure.
+- The project is divided into features, and each feature should follow the layered architecture described in the "Feature Structure" section. The `client`, `parking_spot`, `country`, `city`, `place`, `parking`, `entry_gate`, and `user` features serve as good examples of this structure.
 
 ## Feature Structure
 

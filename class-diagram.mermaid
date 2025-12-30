@@ -1,0 +1,134 @@
+erDiagram
+
+    COUNTRY ||--o{ CITY : contains
+    CITY ||--o{ PLACE : has
+
+    PLACE ||--o{ PARKING : contains
+    PARKING ||--o{ ENTRY_GATE : has
+
+    PARKING ||--o{ PARKING_SPOT : has
+    PARKING ||--o{ PARKING_EVENT : tracks
+
+    USER ||--|| CARD : owns
+    CARD ||--o{ CREDIT_SUPPLING : records
+
+    
+    ENTRY_GATE ||--o{ PARKING_EVENT : logs
+    ENTRY_GATE ||--o{ GATE_MOVMENT: movLogs
+    CARD ||--o{ PARKING_EVENT : authorizes
+
+    COUNTRY {
+        string id PK
+        string name
+        string isoCode
+        datetime createdAt
+    }
+
+    CITY {
+        string id PK
+        string name
+        string postalCode
+        string stateCode
+        string countryId FK
+        datetime createdAt
+    }
+
+    PLACE {
+        string id PK
+        string name
+        string addressLine
+        string cityId FK
+        float latitude
+        float longitude
+        datetime createdAt
+    }
+
+    PARKING {
+        string id PK
+        string placeId FK
+        string name
+        float latitude
+        float longitude
+        int totalCapacity
+        int currentOccupied
+        string status "OPEN|CLOSED|MAINTENANCE"
+        datetime createdAt
+    }
+
+    ENTRY_GATE {
+        string id PK
+        string parkingId FK
+        string name
+        string direction "IN|OUT"
+        string hardwareId
+        bool isActive
+        datetime createdAt
+    }
+
+    PARKING_SPOT {
+        string id PK
+        string parkingId FK
+        string level
+        string spotNumber
+        string type "CAR|EV|HANDICAP"
+        bool isOccupied
+        datetime updatedAt
+    }
+
+    USER {
+        string id PK
+        string fullName
+        string email
+        string phone
+        string status "ACTIVE|BLOCKED"
+        datetime createdAt
+    }
+
+    CARD {
+        string id PK
+        string userId FK
+        string cardNumber
+        float creditBalance
+        string status "ACTIVE|BLOCKED|EXPIRED"
+        datetime issuedAt
+        datetime expiresAt
+    }
+
+    PARKING_EVENT {
+        string id PK
+        string cardId FK
+        string parkingId FK
+        string entryGateId FK
+        string direction "IN|OUT"
+        datetime timestamp
+        float chargedAmount
+        int occupiedAfterEvent
+    }
+
+    GATE_MOVMENT {
+        datetime placedAt
+        string entryGateId FK
+        string previousParking FK "Nullable"
+        string newParking FK
+        string raison "Nullable"
+    }
+
+    CREDIT_SUPPLING {
+      string id PK
+      string cardId FK
+      float amount
+      float feeTaken
+      string source "ADMIN|ONLINE"
+      string status "SUCCESS|FAILED"
+      float balanceBefore
+      float balanceAfter
+      string reference
+      datetime createdAt
+    }
+
+    CREDIT_FEE_FACTOR {
+        string id PK
+        float price
+        string unit "US|TDN"
+        datetime createdAt 
+    }

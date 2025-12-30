@@ -19,20 +19,20 @@ data class ParkingSpot(
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     @Column(nullable = false)
-    val parkingId: String,
+    var parkingId: String,
 
     @Column(nullable = false)
-    val level: String,
+    var level: String,
 
     @Column(nullable = false)
-    val spotNumber: String,
+    var spotNumber: String,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val type: ParkingSpotType,
+    var type: ParkingSpotType,
 
     @Column(nullable = false)
     var isOccupied: Boolean = false,

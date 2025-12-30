@@ -44,7 +44,7 @@ class ClientController(
     fun getAll(
         @PageableDefault(
         size = 20,
-        page = 1) pageable: Pageable): Page<ClientResponse> {
+        page = 0) pageable: Pageable): Page<ClientResponse> {
         return clientService.getAll(pageable)
     }
 

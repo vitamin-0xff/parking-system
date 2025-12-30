@@ -11,23 +11,25 @@ import com.parking.management.features.card.models.merge
 import com.parking.management.features.client.ClientRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
 
+@Service
 class CardService(
     val repository: CardRepository,
     val clientRepository: ClientRepository
 ) {
     fun create(cardCreate: CardCreate): CardResponse {
-        val client = clientRepository.findById(cardCreate.userId).orElseThrow { NotFoundException("${cardCreate.userId} client not exists") }
+        val client = clientRepository.findById(cardCreate.clientId).orElseThrow { NotFoundException("${cardCreate.clientId} client not exists") }
         val card = CardMapper.toEntity(cardCreate, client)
         return CardMapper.toResponse(repository.save(card), ClientMapper.toResponse(client))
     }
 
     fun createList(cardsCreate: List<CardCreate>): List<CardResponse> {
         val cards = cardsCreate.map {
-            val client = clientRepository.findById(it.userId).orElseThrow { NotFoundException("${it.userId} client not exists") }
+            val client = clientRepository.findById(it.clientId).orElseThrow { NotFoundException("${it.clientId} client not exists") }
             CardMapper.toEntity(it, client)
         }
         return repository.saveAll(cards).map { CardMapper.toResponse(it, ClientMapper.toResponse(it.client)) }

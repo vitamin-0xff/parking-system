@@ -4,6 +4,7 @@ import com.parking.management.features.client.Client
 import com.parking.management.features.user.User
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -43,9 +44,8 @@ data class Card(
     @Column(nullable = false)
     var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-    @DeleteTimestamp
     @Column(nullable = false)
-    var deletedAt: LocalDateTime? = LocalDateTime.now(),
+    var deletedAt: LocalDateTime? = null,
 )
 
 enum class CardStatus {

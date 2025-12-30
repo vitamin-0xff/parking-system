@@ -16,7 +16,7 @@ import java.util.UUID
 data class CardCreate(
 
     @field:NotNull(message = "User ID is required")
-    val userId: UUID,
+    val clientId: UUID,
 
     @field:NotBlank(message = "Card number is required")
     val cardNumber: String,
@@ -40,7 +40,7 @@ data class CardCreate(
 
 data class CardUpdate(
 
-    val userId: UUID? = null,
+    val clientId: UUID? = null,
     val cardNumber: String? = null,
     val creditBalance: Float? = null,
     val status: CardStatus? = null,

@@ -2,6 +2,7 @@ package com.parking.management.features.parking_spot
 
 import com.parking.management.comman.models.Message
 import com.parking.management.comman.models.NotFoundException
+import com.parking.management.features.parking.ParkingRepository
 import com.parking.management.features.parking_spot.models.ParkingSpotCreate
 import com.parking.management.features.parking_spot.models.ParkingSpotMapper
 import com.parking.management.features.parking_spot.models.ParkingSpotResponse
@@ -11,22 +12,26 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 import java.util.UUID
 
 @Transactional
 @Service
 class ParkingSpotService(
     val repository: ParkingSpotRepository,
+    val parkingRepository: ParkingRepository
 ) {
 
     fun create(parkingSpotCreate: ParkingSpotCreate): ParkingSpotResponse {
-        val parkingSpot = ParkingSpotMapper.toEntity(parkingSpotCreate)
+        val parking = parkingRepository.findById(parkingSpotCreate.parkingId).orElseThrow { NotFoundException("Parking with id ${parkingSpotCreate.parkingId} not found") }
+        val parkingSpot = ParkingSpotMapper.toEntity(parkingSpotCreate, parking)
         return ParkingSpotMapper.toResponse(repository.save(parkingSpot))
     }
 
     fun createList(parkingSpotsCreate: List<ParkingSpotCreate>): List<ParkingSpotResponse> {
-        val parkingSpots = parkingSpotsCreate.map { ParkingSpotMapper.toEntity(it) }
+        val parkingSpots = parkingSpotsCreate.map { 
+            val parking = parkingRepository.findById(it.parkingId).orElseThrow { NotFoundException("Parking with id ${it.parkingId} not found") }
+            ParkingSpotMapper.toEntity(it, parking) 
+        }
         return repository.saveAll(parkingSpots).map { ParkingSpotMapper.toResponse(it) }
     }
 
@@ -52,11 +57,11 @@ class ParkingSpotService(
         return Message("ParkingSpot deleted successfully")
     }
 
-    fun findByParkingId(parkingId: String, pageable: Pageable): Page<ParkingSpotResponse> {
+    fun findByParkingId(parkingId: UUID, pageable: Pageable): Page<ParkingSpotResponse> {
         return repository.findAllByParkingId(parkingId, pageable).map { ParkingSpotMapper.toResponse(it) }
     }
 
-    fun findAvailableParkingSpots(parkingId: String, pageable: Pageable): Page<ParkingSpotResponse> {
+    fun findAvailableParkingSpots(parkingId: UUID, pageable: Pageable): Page<ParkingSpotResponse> {
         return repository.findAllByParkingIdAndIsOccupied(parkingId, false, pageable).map { ParkingSpotMapper.toResponse(it) }
     }
 

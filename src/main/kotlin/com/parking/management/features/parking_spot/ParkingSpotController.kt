@@ -60,7 +60,7 @@ class ParkingSpotController(
 
     @GetMapping("/parking/{parkingId}")
     fun getByParkingId(
-        @PathVariable parkingId: String,
+        @PathVariable parkingId: UUID,
         @PageableDefault(size = 20, page = 0) pageable: Pageable
     ): Page<ParkingSpotResponse> {
         return parkingSpotService.findByParkingId(parkingId, pageable)
@@ -68,7 +68,7 @@ class ParkingSpotController(
 
     @GetMapping("/parking/{parkingId}/available")
     fun getAvailableParkingSpots(
-        @PathVariable parkingId: String,
+        @PathVariable parkingId: UUID,
         @PageableDefault(size = 20, page = 0) pageable: Pageable
     ): Page<ParkingSpotResponse> {
         return parkingSpotService.findAvailableParkingSpots(parkingId, pageable)

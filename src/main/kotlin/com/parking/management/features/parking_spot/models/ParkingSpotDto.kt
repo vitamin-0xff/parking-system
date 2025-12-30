@@ -1,5 +1,7 @@
 package com.parking.management.features.parking_spot.models
 
+import com.parking.management.features.parking.Parking
+import com.parking.management.features.parking.models.ParkingResponse
 import com.parking.management.features.parking_spot.ParkingSpot
 import com.parking.management.features.parking_spot.ParkingSpotType
 import jakarta.validation.constraints.*
@@ -12,8 +14,8 @@ import java.util.UUID
 
 data class ParkingSpotCreate(
 
-    @field:NotBlank(message = "Parking ID is required")
-    val parkingId: String,
+    @field:NotNull(message = "Parking ID is required")
+    val parkingId: UUID,
 
     @field:NotBlank(message = "Level is required")
     val level: String,
@@ -43,7 +45,7 @@ data class ParkingSpotUpdate(
 
 data class ParkingSpotResponse(
     val id: UUID,
-    val parkingId: String,
+    val parking: ParkingResponse,
     val level: String,
     val spotNumber: String,
     val type: ParkingSpotType,
@@ -58,9 +60,9 @@ data class ParkingSpotResponse(
 
 object ParkingSpotMapper {
 
-    fun toEntity(dto: ParkingSpotCreate): ParkingSpot =
+    fun toEntity(dto: ParkingSpotCreate, parking: Parking): ParkingSpot =
         ParkingSpot(
-            parkingId = dto.parkingId,
+            parking = parking,
             level = dto.level,
             spotNumber = dto.spotNumber,
             type = dto.type
@@ -69,7 +71,7 @@ object ParkingSpotMapper {
     fun toResponse(entity: ParkingSpot): ParkingSpotResponse =
         ParkingSpotResponse(
             id = entity.id!!,
-            parkingId = entity.parkingId,
+            parking = com.parking.management.features.parking.models.ParkingMapper.toResponse(entity.parking),
             level = entity.level,
             spotNumber = entity.spotNumber,
             type = entity.type,

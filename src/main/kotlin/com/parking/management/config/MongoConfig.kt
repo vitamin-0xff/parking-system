@@ -23,9 +23,10 @@ class MongoConfig {
             .build()
         return MongoClients.create(mongoClientSettings)
     }
-    fun mongoTemplate(): MongoTemplate {
-        return MongoTemplate(mongoClient(), ConnectionString(mongoUri!!).database!!)
-    }
+
+    @Bean
+    fun mongoTemplate(mongoClient: MongoClient): MongoTemplate =
+        MongoTemplate(mongoClient, "mongodb-parking-db")
 
     private fun connectionStringDatabase(): String? {
         val connectionString = ConnectionString(mongoUri!!)

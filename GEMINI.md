@@ -19,14 +19,14 @@ This is a parking management system built with Kotlin and Spring Boot. It uses a
     DATABASE_HOST=localhost
     DATABASE_PORT=5432
     DATABASE_NAME=parking
-    DATABASE_USERNAME=admin
+    DATABASE_CLIENTNAME=admin
     DATABASE_PASSWORD=admin
     DATABASE_CONTAINER_NAME=parking-db
 
     MONGODB_HOST=localhost
     MONGODB_PORT=27017
     MONGODB_DBNAME=parking
-    MONGODB_USERNAME=admin
+    MONGODB_CLIENTNAME=admin
     MONGODB_PASSWORD=admin
     MONGODB_CONTAINER=parking-mongodb
     ```
@@ -58,7 +58,7 @@ To run the tests, use the following command:
 - The project uses Gradle for dependency management and building.
 - The project uses Docker for running the databases in a containerized environment.
 - The project uses `springdoc-openapi` to generate API documentation. You can access the Swagger UI at `http://localhost:8080/swagger-ui.html`.
-- The project is divided into features, and each feature should follow the layered architecture described in the "Feature Structure" section. The `client`, `parking_spot`, `country`, `city`, `place`, `parking`, `entry_gate`, and `user` features serve as good examples of this structure.
+- The project is divided into features, and each feature should follow the layered architecture described in the "Feature Structure" section. The `client`, `parking_spot`, `country`, `city`, `place`, `parking`, `entry_gate`, `parking_event`, and `user` features serve as good examples of this structure.
 
 ## Feature Structure
 
@@ -89,7 +89,7 @@ erDiagram
     PARKING ||--o{ PARKING_SPOT : has
     PARKING ||--o{ PARKING_EVENT : tracks
 
-    USER ||--|| CARD : owns
+    CLIENT ||--|| CARD : owns
     CARD ||--o{ CREDIT_SUPPLING : records
 
     
@@ -155,7 +155,7 @@ erDiagram
         datetime updatedAt
     }
 
-    USER {
+    CLIENT {
         string id PK
         string fullName
         string email
@@ -181,8 +181,7 @@ erDiagram
         string entryGateId FK
         string direction "IN|OUT"
         datetime timestamp
-        float chargedAmount
-        int occupiedAfterEvent
+        float chargedCredits
     }
 
     GATE_MOVMENT {

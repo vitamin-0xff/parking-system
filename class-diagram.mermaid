@@ -9,7 +9,7 @@ erDiagram
     PARKING ||--o{ PARKING_SPOT : has
     PARKING ||--o{ PARKING_EVENT : tracks
 
-    USER ||--|| CARD : owns
+    CLIENT ||--|| CARD : owns
     CARD ||--o{ CREDIT_SUPPLING : records
 
     
@@ -75,7 +75,7 @@ erDiagram
         datetime updatedAt
     }
 
-    USER {
+    CLIENT {
         string id PK
         string fullName
         string email

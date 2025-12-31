@@ -31,12 +31,6 @@ data class CreditSupplingCreate(
     @field:NotNull(message = "Status is required")
     val status: CreditSupplingStatus,
 
-    @field:NotNull(message = "Balance before is required")
-    val balanceBefore: Float,
-
-    @field:NotNull(message = "Balance after is required")
-    val balanceAfter: Float,
-
     @field:NotNull(message = "Reference is required")
     val reference: String
 )
@@ -63,15 +57,15 @@ data class CreditSupplingResponse(
    ========================= */
 
 object CreditSupplingMapper {
-    fun toEntity(dto: CreditSupplingCreate, card: Card): CreditSuppling =
+    fun toEntity(dto: CreditSupplingCreate, card: Card, balanceBefore: Float, balanceAfter: Float): CreditSuppling =
         CreditSuppling(
             card = card,
             amount = dto.amount,
             feeTaken = dto.feeTaken,
             source = dto.source,
             status = dto.status,
-            balanceBefore = dto.balanceBefore,
-            balanceAfter = dto.balanceAfter,
+            balanceBefore = balanceBefore,
+            balanceAfter = balanceAfter,
             reference = dto.reference
         )
 

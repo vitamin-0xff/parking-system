@@ -20,8 +20,13 @@ class CreditSupplingService(
 ) {
     fun create(creditSupplingCreate: CreditSupplingCreate): CreditSupplingResponse {
         val card = cardRepository.findById(creditSupplingCreate.cardId).orElseThrow { NotFoundException("${creditSupplingCreate.cardId} card not exists") }
-        // Potentially, here you could add logic to update the card's balance
-        val creditSuppling = CreditSupplingMapper.toEntity(creditSupplingCreate, card)
+
+        val currentCreditBalance = card.creditBalance
+        card.creditBalance += creditSupplingCreate.amount
+        val afterAddingCreditBalance = card.creditBalance
+
+        cardRepository.save(card)
+        val creditSuppling = CreditSupplingMapper.toEntity(creditSupplingCreate, card, currentCreditBalance, afterAddingCreditBalance)
         return CreditSupplingMapper.toResponse(repository.save(creditSuppling))
     }
 

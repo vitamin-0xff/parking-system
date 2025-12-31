@@ -2,6 +2,7 @@ package com.parking.management.features.parking_event
 
 import com.parking.management.comman.models.Message
 import com.parking.management.comman.models.NotFoundException
+import com.parking.management.comman.models.PaymentRequiredException
 import com.parking.management.features.card.CardRepository
 
 import com.parking.management.features.entry_gate.EntryGateRepository
@@ -27,6 +28,18 @@ class ParkingEventService(
         val card = cardRepository.findById(parkingEventCreate.cardId).orElseThrow { NotFoundException("${parkingEventCreate.cardId} card not exists") }
         val parking = parkingRepository.findById(parkingEventCreate.parkingId).orElseThrow { NotFoundException("${parkingEventCreate.parkingId} parking not exists") }
         val entryGate = entryGateRepository.findById(parkingEventCreate.entryGateId).orElseThrow { NotFoundException("${parkingEventCreate.entryGateId} entryGate not exists") }
+
+        /* Same business logic of entering the parking */
+        if(parkingEventCreate.direction == Direction.IN) {
+            if (card.creditBalance <= 0.0f) {
+                throw PaymentRequiredException(message = "Unsufficient credit balance")
+            }
+            card.creditBalance -= 1f
+            parkingEventCreate.creditsCharged = 1f
+            cardRepository.save(card)
+        }else {
+            parkingEventCreate.creditsCharged = 0f
+        }
         val parkingEvent = ParkingEventMapper.toEntity(parkingEventCreate, card, parking, entryGate)
         return ParkingEventMapper.toResponse(repository.save(parkingEvent))
     }
@@ -44,7 +57,6 @@ class ParkingEventService(
     fun getAll(pageable: Pageable, deletedIncluded: Boolean = false): Page<ParkingEventResponse> {
         return if (deletedIncluded) repository.findAll(pageable).map { ParkingEventMapper.toResponse(it) } else repository.findAllByDeletedAtIsNull(pageable).map { ParkingEventMapper.toResponse(it) }
     }
-
 
     fun delete(parkingEventId: UUID): Message {
         val parkingEvent = repository.findById(parkingEventId).orElseThrow { NotFoundException("$parkingEventId parkingEvent not exists") }

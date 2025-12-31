@@ -46,3 +46,8 @@ class ThirdPartyServiceException(
     "THIRD_PARTY_SERVICE_ERROR",
     "$serviceName: $message"
 )
+
+class PaymentRequiredException(
+    message: String = "Payment required for such operation",
+    errorCode: String = "INSUFFICIENT_CREDIT"
+) : AppException(402, errorCode, message)

@@ -30,9 +30,7 @@ data class ParkingEventCreate(
     var entryGateId: UUID,
     @field:NotNull(message = "Direction id is required")
     var direction: Direction,
-    @field:NotNull(message = "Charged amount is required")
-    @field:Min(value = 0, message = "Charged amount must be greater than 0")
-    var creditsCharged: Float
+    var creditsCharged: Float = 1f
 )
 
 /* =========================
@@ -64,7 +62,7 @@ object ParkingEventMapper {
             parking = parking,
             entryGate = entryGate,
             direction = dto.direction,
-            chargedCredits = dto.creditsCharged,
+            chargedCredits = 1f,
             timestamp = LocalDateTime.now()
         )
 

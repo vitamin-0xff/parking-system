@@ -102,6 +102,10 @@ class GlobalWrapper : ResponseEntityExceptionHandler(), ResponseBodyAdvice<Any> 
     fun handleRNF(e: NotFoundException, req: HttpServletRequest) =
         error("RESOURCE_NOT_FOUND", e.message!!, 404, req.path())
 
+    @ExceptionHandler(PaymentRequiredException::class)
+    fun handleRNF(e: PaymentRequiredException, req: HttpServletRequest) =
+        error(e.errorCode, e.message!!, e.status, req.path())
+
     @ExceptionHandler(BadRequestException::class)
     fun handle(e: BadRequestException, req: HttpServletRequest) =
         error(e.errorCode, e.message!!, 400, req.path())

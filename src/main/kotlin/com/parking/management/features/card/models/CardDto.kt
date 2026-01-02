@@ -1,9 +1,11 @@
 package com.parking.management.features.card.models
 
+import com.example.parking.client.api.ClientCreate
 import com.example.parking.client.api.ClientResponse
 import com.parking.management.features.card.Card
 import com.parking.management.features.card.CardStatus
 import com.parking.management.features.client.Client
+import com.parking.management.features.user.models.UserCreate
 import com.parking.management.features.user.models.UserResponse
 import jakarta.validation.constraints.*
 import java.time.LocalDateTime
@@ -34,12 +36,25 @@ data class CardCreate(
     val expiresAt: LocalDateTime
 )
 
+data class CardCreateV2(
+    val client: ClientCreate,
+
+    @field:NotNull(message = "Issued at date is required")
+    val issuedAt: LocalDateTime,
+
+    @field:NotNull(message = "Expires at date is required")
+    val expiresAt: LocalDateTime,
+
+    val creditBalance: Float = 0f,
+    val status: CardStatus = CardStatus.ACTIVE,
+
+)
+
 /* =========================
    UPDATE
    ========================= */
 
 data class CardUpdate(
-
     val clientId: UUID? = null,
     val cardNumber: String? = null,
     val creditBalance: Float? = null,

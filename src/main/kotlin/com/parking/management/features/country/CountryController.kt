@@ -2,6 +2,7 @@ package com.parking.management.features.country
 
 import com.parking.management.comman.models.Message
 import com.parking.management.features.country.models.CountryCreate
+import com.parking.management.features.country.models.CountryFuzzySearchResponse
 import com.parking.management.features.country.models.CountryResponse
 import com.parking.management.features.country.models.CountryUpdate
 import jakarta.validation.Valid
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
@@ -49,6 +51,15 @@ class CountryController(
     @PutMapping("/{id}")
     fun update(@PathVariable id: UUID, @Valid @RequestBody countryUpdate: CountryUpdate): CountryResponse {
         return countryService.update(id, countryUpdate)
+    }
+
+    @GetMapping("/fuzzySearch")
+    fun fuzzySearch(
+        @RequestParam name: String,
+        @RequestParam(defaultValue = "0.3") threshold: Double,
+        @RequestParam(defaultValue = "10") limit: Int
+    ): List<CountryFuzzySearchResponse> {
+        return countryService.fuzzySearch(name, threshold, limit)
     }
 
     @DeleteMapping("/{id}")

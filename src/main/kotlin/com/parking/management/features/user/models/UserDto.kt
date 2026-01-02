@@ -22,8 +22,7 @@ data class UserCreate(
     @field:NotBlank(message = "Phone is required")
     val phone: String,
 
-    @field:NotNull(message = "Status is required")
-    val status: UserStatus
+    val status: UserStatus = UserStatus.ACTIVE
 )
 
 /* =========================

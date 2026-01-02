@@ -1,5 +1,7 @@
 package com.parking.management.features.parking.models
 
+import com.parking.management.features.city.models.CityMapper
+import com.parking.management.features.city.models.CityResponse
 import com.parking.management.features.parking.Parking
 import com.parking.management.features.parking.ParkingStatus
 import com.parking.management.features.place.models.PlaceResponse
@@ -14,7 +16,7 @@ import java.util.UUID
 data class ParkingCreate(
 
     @field:NotNull(message = "Place ID is required")
-    val placeId: UUID,
+    val cityId: UUID,
 
     @field:NotBlank(message = "Name is required")
     val name: String,
@@ -41,7 +43,7 @@ data class ParkingCreate(
 
 data class ParkingUpdate(
 
-    val placeId: UUID? = null,
+    val cityId: UUID? = null,
     val name: String? = null,
     val latitude: Float? = null,
     val longitude: Float? = null,
@@ -56,7 +58,7 @@ data class ParkingUpdate(
 
 data class ParkingResponse(
     val id: UUID,
-    val place: PlaceResponse,
+    val city: CityResponse,
     val name: String,
     val latitude: Float,
     val longitude: Float,
@@ -75,7 +77,7 @@ object ParkingMapper {
     fun toResponse(entity: Parking): ParkingResponse =
         ParkingResponse(
             id = entity.id!!,
-            place = com.parking.management.features.place.models.PlaceMapper.toResponse(entity.place),
+            city = CityMapper.toResponse(entity.city),
             name = entity.name,
             latitude = entity.latitude,
             longitude = entity.longitude,

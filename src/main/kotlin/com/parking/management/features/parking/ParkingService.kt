@@ -2,6 +2,7 @@ package com.parking.management.features.parking
 
 import com.parking.management.comman.models.Message
 import com.parking.management.comman.models.NotFoundException
+import com.parking.management.features.city.CityRepository
 import com.parking.management.features.parking.models.ParkingCreate
 import com.parking.management.features.parking.models.ParkingMapper
 import com.parking.management.features.parking.models.ParkingResponse
@@ -18,13 +19,13 @@ import java.util.UUID
 @Service
 class ParkingService(
     val repository: ParkingRepository,
-    val placeRepository: PlaceRepository
+    val cityRepository: CityRepository
 ) {
 
     fun create(parkingCreate: ParkingCreate): ParkingResponse {
-        val place = placeRepository.findById(parkingCreate.placeId).orElseThrow { NotFoundException("Place with id ${parkingCreate.placeId} not found") }
+        val city = cityRepository.findById(parkingCreate.cityId).orElseThrow { NotFoundException("City with id ${parkingCreate.cityId} not found") }
         val parking = Parking(
-            place = place,
+            city = city,
             name = parkingCreate.name,
             latitude = parkingCreate.latitude,
             longitude = parkingCreate.longitude,
@@ -37,9 +38,9 @@ class ParkingService(
 
     fun createList(parkingsCreate: List<ParkingCreate>): List<ParkingResponse> {
         val parkings = parkingsCreate.map {
-            val place = placeRepository.findById(it.placeId).orElseThrow { NotFoundException("Place with id ${it.placeId} not found") }
+            val city = cityRepository.findById(it.cityId).orElseThrow { NotFoundException("City with id ${it.cityId} not found") }
             Parking(
-                place = place,
+                city = city,
                 name = it.name,
                 latitude = it.latitude,
                 longitude = it.longitude,
@@ -64,9 +65,9 @@ class ParkingService(
     fun update(parkingId: UUID, parkingUpdate: ParkingUpdate): ParkingResponse {
         val parking = repository.findById(parkingId).orElseThrow { NotFoundException("$parkingId Parking not exists") }
         parking.merge(parkingUpdate)
-        parkingUpdate.placeId?.let {
-            val place = placeRepository.findById(it).orElseThrow { NotFoundException("Place with id $it not found") }
-            parking.place = place
+        parkingUpdate.cityId?.let {
+            val city = cityRepository.findById(it).orElseThrow { NotFoundException("Place with id $it not found") }
+            parking.city = city
         }
         return ParkingMapper.toResponse(repository.save(parking))
     }
@@ -77,7 +78,7 @@ class ParkingService(
         return Message("Parking deleted successfully")
     }
 
-    fun findAllByPlaceId(placeId: UUID, pageable: Pageable): Page<ParkingResponse> {
-        return repository.findAllByPlaceId(placeId, pageable).map { ParkingMapper.toResponse(it) }
+    fun findAllByPlaceId(cityId: UUID, pageable: Pageable): Page<ParkingResponse> {
+        return repository.findAllByCityId(cityId, pageable).map { ParkingMapper.toResponse(it) }
     }
 }

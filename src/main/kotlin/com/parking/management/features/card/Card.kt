@@ -44,7 +44,7 @@ data class Card(
     @Column(nullable = false)
     var updatedAt: LocalDateTime? = LocalDateTime.now(),
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     var deletedAt: LocalDateTime? = null,
 )
 

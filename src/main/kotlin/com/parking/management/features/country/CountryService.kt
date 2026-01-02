@@ -1,8 +1,10 @@
 package com.parking.management.features.country
 
+import com.parking.management.comman.models.ConflictException
 import com.parking.management.comman.models.Message
 import com.parking.management.comman.models.NotFoundException
 import com.parking.management.features.country.models.CountryCreate
+import com.parking.management.features.country.models.CountryFuzzySearchResponse
 import com.parking.management.features.country.models.CountryMapper
 import com.parking.management.features.country.models.CountryResponse
 import com.parking.management.features.country.models.CountryUpdate
@@ -20,6 +22,9 @@ class CountryService(
 ) {
 
     fun create(countryCreate: CountryCreate): CountryResponse {
+        if (repository.existsByIsoCode(countryCreate.isoCode)) {
+            throw ConflictException("Country with code ${countryCreate.isoCode} already exists")
+        }
         val country = CountryMapper.toEntity(countryCreate)
         return CountryMapper.toResponse(repository.save(country))
     }
@@ -49,5 +54,9 @@ class CountryService(
         val country = repository.findById(countryId).orElseThrow { NotFoundException("$countryId Country not exists") }
         repository.delete(country)
         return Message("Country deleted successfully")
+    }
+
+    fun fuzzySearch(name: String, threshold: Double, limit: Int): List<CountryFuzzySearchResponse> {
+        return repository.fuzzySearch(name, threshold, limit)
     }
 }

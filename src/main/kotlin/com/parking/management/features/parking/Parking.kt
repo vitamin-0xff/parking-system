@@ -1,5 +1,6 @@
 package com.parking.management.features.parking
 
+import com.parking.management.features.city.City
 import com.parking.management.features.place.Place
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
@@ -15,8 +16,8 @@ data class Parking(
     val id: UUID? = null,
 
     @ManyToOne
-    @JoinColumn(name = "place_id", nullable = false)
-    var place: Place,
+    @JoinColumn(name = "city_id", nullable = false)
+    var city: City,
 
     @Column(nullable = false)
     var name: String,

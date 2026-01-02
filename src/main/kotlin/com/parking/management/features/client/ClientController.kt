@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.data.web.PageableDefault
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -36,7 +37,7 @@ class ClientController(
     }
 
     @GetMapping("/{id}")
-    fun get(@PathParam("id") id: UUID): ClientResponse {
+    fun get(@PathVariable("id") id: UUID): ClientResponse {
         return clientService.getById(id)
     }
 
@@ -49,12 +50,12 @@ class ClientController(
     }
 
     @PutMapping("/{id}")
-    fun update(@PathParam("id") id: UUID, @Valid @RequestBody clientUpdate: ClientUpdate): ClientResponse {
+    fun update(@PathVariable("id") id: UUID, @Valid @RequestBody clientUpdate: ClientUpdate): ClientResponse {
         return clientService.update(id, clientUpdate)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathParam("id") id: UUID): Message {
+    fun delete(@PathVariable("id") id: UUID): Message {
         return clientService.delete(id)
     }
 }

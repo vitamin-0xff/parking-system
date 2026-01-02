@@ -1,9 +1,11 @@
 package com.parking.management.features.card
 
 import com.example.parking.client.api.ClientMapper
+import com.parking.management.comman.models.ConflictException
 import com.parking.management.comman.models.Message
 import com.parking.management.comman.models.NotFoundException
 import com.parking.management.features.card.models.CardCreate
+import com.parking.management.features.card.models.CardCreateV2
 import com.parking.management.features.card.models.CardMapper
 import com.parking.management.features.card.models.CardResponse
 import com.parking.management.features.card.models.CardUpdate
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.UUID
 
+@Transactional
 @Service
 class CardService(
     val repository: CardRepository,
@@ -25,6 +28,27 @@ class CardService(
         val client = clientRepository.findById(cardCreate.clientId).orElseThrow { NotFoundException("${cardCreate.clientId} client not exists") }
         val card = CardMapper.toEntity(cardCreate, client)
         return CardMapper.toResponse(repository.save(card), ClientMapper.toResponse(client))
+    }
+
+    fun createWithUser(cardCreate: CardCreateV2): CardResponse {
+        cardCreate.client.email?.let {
+            if(clientRepository.existsByEmail(it)) {
+                throw ConflictException("Email already exists")
+            }
+        }
+        if(clientRepository.existsByPhone(cardCreate.client.phone)) {
+            throw ConflictException("Phone number already exists")
+        }
+        val newClient = clientRepository.save(ClientMapper.toEntity(cardCreate.client))
+        val card = CardMapper.toEntity(CardCreate(
+            clientId = newClient.id!!,
+            cardNumber = UUID.randomUUID().toString(),
+            creditBalance = cardCreate.creditBalance,
+            expiresAt = cardCreate.expiresAt,
+            issuedAt = cardCreate.issuedAt,
+            status = cardCreate.status
+            ), newClient)
+        return CardMapper.toResponse(repository.save(card), ClientMapper.toResponse(newClient))
     }
 
     fun createList(cardsCreate: List<CardCreate>): List<CardResponse> {

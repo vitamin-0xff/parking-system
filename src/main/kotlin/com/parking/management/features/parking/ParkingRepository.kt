@@ -7,5 +7,5 @@ import java.util.UUID
 
 interface ParkingRepository : JpaRepository<Parking, UUID> {
     fun findByName(name: String): Parking?
-    fun findAllByPlaceId(placeId: UUID, pageable: Pageable): Page<Parking>
+    fun findAllByCityId(cityId: UUID, pageable: Pageable): Page<Parking>
 }

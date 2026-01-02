@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
@@ -141,11 +142,9 @@ class GlobalWrapper : ResponseEntityExceptionHandler(), ResponseBodyAdvice<Any> 
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        val path = (request as HttpServletRequest).requestURI
-
         val errors = ex.fieldErrors.map { "${it.field}: ${it.defaultMessage}" }
-        return ResponseEntity.badRequest()
-            .body(ApiResponse.error(ApiError("VALIDATION_FAILED", "Validation failed", errors), 400, path))
+        return ResponseEntity.status(200)
+            .body(ApiResponse.error(ApiError("VALIDATION_FAILED", "Validation failed", errors), 400, (request as ServletWebRequest).request.requestURI))
     }
 
     override fun handleHttpMessageNotReadable(
@@ -154,9 +153,8 @@ class GlobalWrapper : ResponseEntityExceptionHandler(), ResponseBodyAdvice<Any> 
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        val path = (request as HttpServletRequest).requestURI
-        return ResponseEntity.badRequest()
-            .body(ApiResponse.error(ApiError("BAD_REQUEST", "Invalid JSON format Malformed request"), 400, path))
+        return ResponseEntity.status(200)
+            .body(ApiResponse.error(ApiError("BAD_REQUEST", "Invalid JSON format Malformed request"), 400, (request as ServletWebRequest).request.requestURI))
 
     }
 

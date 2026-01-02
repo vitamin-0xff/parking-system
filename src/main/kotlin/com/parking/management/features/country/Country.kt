@@ -31,8 +31,8 @@ data class Country(
     @Column
     var longitude: Double,
 
-    @Column
-    var zoomFactor: UInt,
+    @Column(name = "zoom_factor")
+    var zoomFactor: Int,
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

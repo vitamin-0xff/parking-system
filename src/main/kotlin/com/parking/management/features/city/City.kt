@@ -30,7 +30,7 @@ data class City(
     var longitude: Double,
 
     @Column
-    var zoomFactor: UInt,
+    var zoomFactor: Int,
 
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)

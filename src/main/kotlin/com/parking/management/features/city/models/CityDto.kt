@@ -27,7 +27,7 @@ data class CityCreate(
     val longitude: Double,
 
     @field:Range(min = 0, max = 1, message = "Zoom factor must be between 1 and 25")
-    val zoomFactor: UInt,
+    val zoomFactor: Int,
 
     @field:NotNull(message = "Country ID is required")
     val countryId: UUID
@@ -43,7 +43,7 @@ data class CityUpdate(
     val stateCode: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val zoomFactor: UInt? = null,
+    val zoomFactor: Int? = null,
     val countryId: UUID? = null
 )
 
@@ -57,7 +57,7 @@ data class CityResponse(
     val postalCode: String,
     val latitude: Double,
     val longitude: Double,
-    val zoomFactor: UInt,
+    val zoomFactor: Int,
     val stateCode: String,
     val country: CountryResponse,
     val createdAt: LocalDateTime

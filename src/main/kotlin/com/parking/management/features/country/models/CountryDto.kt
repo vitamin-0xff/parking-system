@@ -22,7 +22,7 @@ data class CountryCreate(
     val longitude: Double,
 
     @field:Range(max = 25, min = 0, message = "Zoom factor must be between 1 and 25")
-    val zoomFactor: UInt
+    val zoomFactor: Int
 )
 
 /* =========================
@@ -34,7 +34,7 @@ data class CountryUpdate(
     val isoCode: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val zoomFactor: UInt? = null
+    val zoomFactor: Int? = null
 )
 
 /* =========================
@@ -47,7 +47,7 @@ data class CountryResponse(
     val isoCode: String,
     val latitude: Double,
     val longitude: Double,
-    val zoomFactor: UInt,
+    val zoomFactor: Int,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )

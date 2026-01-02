@@ -25,6 +25,15 @@ data class Country(
     @Column(nullable = false, unique = true)
     var isoCode: String,
 
+    @Column
+    var latitude: Double,
+
+    @Column
+    var longitude: Double,
+
+    @Column
+    var zoomFactor: UInt,
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     var createdAt: LocalDateTime? = LocalDateTime.now(),

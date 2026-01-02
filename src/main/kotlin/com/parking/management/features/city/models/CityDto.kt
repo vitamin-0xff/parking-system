@@ -3,6 +3,7 @@ package com.parking.management.features.city.models
 import com.parking.management.features.city.City
 import com.parking.management.features.country.models.CountryResponse
 import jakarta.validation.constraints.*
+import org.hibernate.validator.constraints.Range
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -21,6 +22,13 @@ data class CityCreate(
     @field:NotBlank(message = "State code is required")
     val stateCode: String,
 
+    val latitude: Double,
+
+    val longitude: Double,
+
+    @field:Range(min = 0, max = 1, message = "Zoom factor must be between 1 and 25")
+    val zoomFactor: UInt,
+
     @field:NotNull(message = "Country ID is required")
     val countryId: UUID
 )
@@ -30,10 +38,12 @@ data class CityCreate(
    ========================= */
 
 data class CityUpdate(
-
     val name: String? = null,
     val postalCode: String? = null,
     val stateCode: String? = null,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val zoomFactor: UInt? = null,
     val countryId: UUID? = null
 )
 
@@ -45,6 +55,9 @@ data class CityResponse(
     val id: UUID,
     val name: String,
     val postalCode: String,
+    val latitude: Double,
+    val longitude: Double,
+    val zoomFactor: UInt,
     val stateCode: String,
     val country: CountryResponse,
     val createdAt: LocalDateTime
@@ -55,13 +68,15 @@ data class CityResponse(
    ========================= */
 
 object CityMapper {
-
     fun toResponse(entity: City): CityResponse =
         CityResponse(
             id = entity.id!!,
             name = entity.name,
             postalCode = entity.postalCode,
             stateCode = entity.stateCode,
+            latitude = entity.latitude,
+            longitude = entity.longitude,
+            zoomFactor = entity.zoomFactor,
             country = com.parking.management.features.country.models.CountryMapper.toResponse(entity.country),
             createdAt = entity.createdAt!!
         )
@@ -76,5 +91,14 @@ fun City.merge(cityUpdate: CityUpdate) {
     }
     cityUpdate.stateCode?.let {
         stateCode = it
+    }
+    cityUpdate.latitude?.let {
+        latitude = it
+    }
+    cityUpdate.longitude?.let {
+        longitude = it
+    }
+    cityUpdate.zoomFactor?.let {
+        zoomFactor = it
     }
 }

@@ -23,6 +23,15 @@ data class City(
     @Column(nullable = false)
     var stateCode: String,
 
+    @Column
+    var latitude: Double,
+
+    @Column
+    var longitude: Double,
+
+    @Column
+    var zoomFactor: UInt,
+
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
     var country: Country,

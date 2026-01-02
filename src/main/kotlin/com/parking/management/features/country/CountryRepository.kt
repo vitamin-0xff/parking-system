@@ -16,6 +16,9 @@ interface CountryRepository : JpaRepository<Country, UUID> {
           SELECT 
           c.id as id,
           c.name AS name,
+          c.latitude AS latitude,
+          c.longitude AS longitude,
+          c.zoom_factor AS zoomFactor,
           c.iso_code AS isoCode,
           similarity(c.name, :name) AS sim
           FROM countries c

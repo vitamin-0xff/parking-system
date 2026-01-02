@@ -27,7 +27,10 @@ class CityService(
             name = cityCreate.name,
             postalCode = cityCreate.postalCode,
             stateCode = cityCreate.stateCode,
-            country = country
+            country = country,
+            latitude = cityCreate.latitude,
+            longitude = cityCreate.longitude,
+            zoomFactor = cityCreate.zoomFactor
         )
         return CityMapper.toResponse(repository.save(city))
     }
@@ -39,7 +42,10 @@ class CityService(
                 name = it.name,
                 postalCode = it.postalCode,
                 stateCode = it.stateCode,
-                country = country
+                country = country,
+                latitude = it.latitude,
+                longitude = it.longitude,
+                zoomFactor = it.zoomFactor
             )
         }
         return repository.saveAll(cities).map { CityMapper.toResponse(it) }

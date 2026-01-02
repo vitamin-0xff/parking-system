@@ -16,9 +16,6 @@ data class CityCreate(
     @field:NotBlank(message = "Name is required")
     val name: String,
 
-    @field:NotBlank(message = "Postal code is required")
-    val postalCode: String,
-
     @field:NotBlank(message = "State code is required")
     val stateCode: String,
 
@@ -39,7 +36,6 @@ data class CityCreate(
 
 data class CityUpdate(
     val name: String? = null,
-    val postalCode: String? = null,
     val stateCode: String? = null,
     val latitude: Double? = null,
     val longitude: Double? = null,
@@ -54,7 +50,6 @@ data class CityUpdate(
 data class CityResponse(
     val id: UUID,
     val name: String,
-    val postalCode: String,
     val latitude: Double,
     val longitude: Double,
     val zoomFactor: Int,
@@ -72,7 +67,6 @@ object CityMapper {
         CityResponse(
             id = entity.id!!,
             name = entity.name,
-            postalCode = entity.postalCode,
             stateCode = entity.stateCode,
             latitude = entity.latitude,
             longitude = entity.longitude,
@@ -85,9 +79,6 @@ object CityMapper {
 fun City.merge(cityUpdate: CityUpdate) {
     cityUpdate.name?.let {
         name = it
-    }
-    cityUpdate.postalCode?.let {
-        postalCode = it
     }
     cityUpdate.stateCode?.let {
         stateCode = it

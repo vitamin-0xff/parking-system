@@ -18,9 +18,6 @@ data class City(
     var name: String,
 
     @Column(nullable = false)
-    var postalCode: String,
-
-    @Column(nullable = false)
     var stateCode: String,
 
     @Column

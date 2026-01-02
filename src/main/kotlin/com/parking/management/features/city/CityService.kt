@@ -25,7 +25,6 @@ class CityService(
         val country = countryRepository.findById(cityCreate.countryId).orElseThrow { NotFoundException("Country with id ${cityCreate.countryId} not found") }
         val city = City(
             name = cityCreate.name,
-            postalCode = cityCreate.postalCode,
             stateCode = cityCreate.stateCode,
             country = country,
             latitude = cityCreate.latitude,
@@ -40,7 +39,6 @@ class CityService(
             val country = countryRepository.findById(it.countryId).orElseThrow { NotFoundException("Country with id ${it.countryId} not found") }
             City(
                 name = it.name,
-                postalCode = it.postalCode,
                 stateCode = it.stateCode,
                 country = country,
                 latitude = it.latitude,

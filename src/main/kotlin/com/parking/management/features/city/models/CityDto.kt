@@ -23,7 +23,7 @@ data class CityCreate(
 
     val longitude: Double,
 
-    @field:Range(min = 0, max = 1, message = "Zoom factor must be between 1 and 25")
+    @field:Range(min = 0, max = 25, message = "Zoom factor must be between 1 and 25")
     val zoomFactor: Int,
 
     @field:NotNull(message = "Country ID is required")

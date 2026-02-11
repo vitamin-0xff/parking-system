@@ -9,6 +9,11 @@ import com.parking.management.features.parking.models.ParkingResponse
 import com.parking.management.features.parking.models.ParkingUpdate
 import com.parking.management.features.parking.models.merge
 import com.parking.management.features.place.PlaceRepository
+import com.parking.management.specifications.Filter
+import com.parking.management.specifications.FilterObject
+import com.parking.management.specifications.SpecificationsDto
+import com.parking.management.specifications.SpecificationsType
+import com.parking.management.specifications.SpecsFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -58,8 +63,10 @@ class ParkingService(
     }
 
     @Transactional(readOnly = true)
-    fun getAll(pageable: Pageable): Page<ParkingResponse> {
-        return repository.findAll(pageable).map { ParkingMapper.toResponse(it) }
+    fun getAll(pageable: Pageable, filterList: List<FilterObject>? = null): Page<ParkingResponse> {
+        if(filterList == null) return repository.findAll(pageable).map { ParkingMapper.toResponse(it) }
+        val specifications = SpecsFactory.generalFilter<Parking>(filterList)
+        return repository.findAll(specifications, pageable).map { ParkingMapper.toResponse(it) }
     }
 
     fun update(parkingId: UUID, parkingUpdate: ParkingUpdate): ParkingResponse {

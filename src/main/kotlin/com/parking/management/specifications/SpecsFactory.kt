@@ -1,5 +1,7 @@
 package com.parking.management.specifications
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.parking.management.features.country.Country
 import com.parking.management.features.parking.Parking
 import jakarta.persistence.criteria.JoinType
@@ -15,17 +17,26 @@ import java.time.LocalDateTime
 //    current_occupied_capacity: range
 //}
 
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes(
+    JsonSubTypes.Type(value = RangeFilter::class, name = "intRange"),
+    JsonSubTypes.Type(value = DateRangeFilter::class, name = "dateRange"),
+    JsonSubTypes.Type(value = StringFilter::class, name = "string"),
+    JsonSubTypes.Type(value = StringListFilter::class, name = "stringList")
+)
 sealed class Filter
 
 data class RangeFilter(
     val start: Int,
     val end: Int? = 0,
-    val id: Int = 1,
 ): Filter()
 
 data class StringFilter(
     val value: String,
-    val id: Int = 2,
 ): Filter()
 
 data class StringListFilter(
@@ -33,10 +44,9 @@ data class StringListFilter(
     val id: Int = 3,
 ): Filter()
 
-data class DataRangeFilter(
+data class DateRangeFilter(
     val start: LocalDateTime,
     val end: LocalDateTime? = null,
-    val id: Int = 5,
 ): Filter()
 
 
@@ -50,6 +60,10 @@ data class FilterJoin(
     val rootFieldName: String,
     val joinFieldName: String,
     val filter: Filter
+)
+
+data class Filters(
+    val filters: List<FilterObject>,
 )
 
 object SpecsFactory {
@@ -118,7 +132,7 @@ object SpecsFactory {
                         }
                         is StringFilter -> predicateList.add(cb.equal(root.get<String>(filter.fieldName), filter.filter.value))
                         is StringListFilter -> predicateList.add(root.get<String>(filter.fieldName).`in`(filter.filter.listOfStrings))
-                        is DataRangeFilter -> {
+                        is DateRangeFilter -> {
                             if (filter.filter.end == null) predicateList.add(cb.greaterThanOrEqualTo(root.get(filter.fieldName), filter.filter.start))
                             else predicateList.add(cb.between(root.get(filter.fieldName), filter.filter.start, filter.filter.end))
                         }
@@ -144,7 +158,7 @@ object SpecsFactory {
                 }
                 else if (filter.filter is StringFilter) predicateList.add(builder.equal(join.get<String>(filter.joinFieldName), filter.filter.value))
                 else if (filter.filter is StringListFilter) predicateList.add(join.get<String>(filter.joinFieldName).`in`(filter.filter.listOfStrings))
-                else if (filter.filter is DataRangeFilter) {
+                else if (filter.filter is DateRangeFilter) {
                     if (filter.filter.end == null) predicateList.add(builder.greaterThanOrEqualTo(join.get(filter.joinFieldName), filter.filter.start))
                     else predicateList.add(builder.between(join.get(filter.joinFieldName), filter.filter.start, filter.filter.end))
                 }

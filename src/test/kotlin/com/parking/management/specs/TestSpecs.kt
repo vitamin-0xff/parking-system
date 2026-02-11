@@ -116,7 +116,7 @@ class TestSpecs {
         val parking_ = repository!!.findAll(SpecsFactory.generalFilter<Parking>(
             filters = listOf(FilterObject(
                 fieldName = "createdAt",
-                filter = DataRangeFilter(
+                filter = DateRangeFilter(
                     start = java.time.LocalDateTime.now().minusDays(1),
                     end = java.time.LocalDateTime.now().plusDays(1)
                 )

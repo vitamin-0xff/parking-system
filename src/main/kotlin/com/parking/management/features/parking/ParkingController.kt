@@ -1,9 +1,15 @@
 package com.parking.management.features.parking
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.parking.management.comman.models.Message
 import com.parking.management.features.parking.models.ParkingCreate
 import com.parking.management.features.parking.models.ParkingResponse
 import com.parking.management.features.parking.models.ParkingUpdate
+import com.parking.management.specifications.Filter
+import com.parking.management.specifications.FilterObject
+import com.parking.management.specifications.Filters
+import com.parking.management.specifications.SpecificationsDto
+import com.parking.management.specifications.SpecificationsType
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -21,7 +27,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/api/parkings")
 class ParkingController(
-    val parkingService: ParkingService
+    val parkingService: ParkingService,
+    val objectMapper: ObjectMapper
 ) {
     @PostMapping
     fun create(@Valid @RequestBody parkingCreate: ParkingCreate): ParkingResponse {
@@ -38,12 +45,12 @@ class ParkingController(
         return parkingService.getById(id)
     }
 
-    @GetMapping
+    @PostMapping("/instances/all")
     fun getAll(
         @PageableDefault(
             size = 20,
-            page = 0) pageable: Pageable): Page<ParkingResponse> {
-        return parkingService.getAll(pageable)
+            page = 0) pageable: Pageable, @RequestBody filter: List<FilterObject>? = null): Page<ParkingResponse> {
+        return parkingService.getAll(pageable, filter)
     }
 
     @PutMapping("/{id}")

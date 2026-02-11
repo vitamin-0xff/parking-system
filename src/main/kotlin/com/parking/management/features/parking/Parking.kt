@@ -15,7 +15,7 @@ data class Parking(
     @GeneratedValue(strategy = GenerationType.UUID)
     val id: UUID? = null,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     var city: City,
 

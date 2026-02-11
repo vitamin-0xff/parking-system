@@ -29,7 +29,7 @@ data class City(
     @Column
     var zoomFactor: Int,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
     var country: Country,
 

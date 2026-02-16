@@ -2,6 +2,9 @@ package com.parking.management.features.city.models
 
 import com.parking.management.features.city.City
 import com.parking.management.features.country.models.CountryResponse
+import com.parking.management.specifications.DateRangeFilter
+import com.parking.management.specifications.RangeFilter
+import com.parking.management.specifications.StringListFilter
 import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.Range
 import java.time.LocalDateTime
@@ -59,8 +62,20 @@ data class CityResponse(
 )
 
 /* =========================
-   MAPPER
+   SPECIFICATIONS DTO
    ========================= */
+
+data class CitySpecificationsDto(
+    val names: StringListFilter? = null,
+    val stateCodes: StringListFilter? = null,
+    val countryNames: StringListFilter? = null,
+    val zoomFactor: RangeFilter? = null,
+    val createdAt: DateRangeFilter? = null
+)
+
+/* =========================
+    MAPPER
+    ========================= */
 
 object CityMapper {
     fun toResponse(entity: City): CityResponse =

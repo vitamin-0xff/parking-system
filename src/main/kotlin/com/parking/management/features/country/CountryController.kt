@@ -4,6 +4,7 @@ import com.parking.management.comman.models.Message
 import com.parking.management.features.country.models.CountryCreate
 import com.parking.management.features.country.models.CountryFuzzySearchResponse
 import com.parking.management.features.country.models.CountryResponse
+import com.parking.management.features.country.models.CountrySpecificationsDto
 import com.parking.management.features.country.models.CountryUpdate
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -46,6 +47,16 @@ class CountryController(
             size = 20,
             page = 0) pageable: Pageable): Page<CountryResponse> {
         return countryService.getAll(pageable)
+    }
+
+    @PostMapping("/instances/all")
+    fun getAllFilter(
+        @PageableDefault(
+            size = 20,
+            page = 0) pageable: Pageable,
+        @RequestBody filter: CountrySpecificationsDto? = null
+    ): Page<CountryResponse> {
+        return countryService.getAllFilter(pageable, filter)
     }
 
     @PutMapping("/{id}")

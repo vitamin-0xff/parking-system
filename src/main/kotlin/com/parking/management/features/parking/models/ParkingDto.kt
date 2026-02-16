@@ -5,6 +5,9 @@ import com.parking.management.features.city.models.CityResponse
 import com.parking.management.features.parking.Parking
 import com.parking.management.features.parking.ParkingStatus
 import com.parking.management.features.place.models.PlaceResponse
+import com.parking.management.specifications.DateRangeFilter
+import com.parking.management.specifications.RangeFilter
+import com.parking.management.specifications.StringListFilter
 import jakarta.validation.constraints.*
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,25 +19,25 @@ import java.util.UUID
 data class ParkingCreate(
 
     @field:NotNull(message = "Place ID is required")
-    val cityId: UUID,
+    var cityId: UUID,
 
     @field:NotBlank(message = "Name is required")
     val name: String,
 
     @field:NotNull(message = "Latitude is required")
-    val latitude: Float,
+    var latitude: Float,
 
     @field:NotNull(message = "Longitude is required")
-    val longitude: Float,
+    var longitude: Float,
 
     @field:NotNull(message = "Total capacity is required")
-    val totalCapacity: Int,
+    var totalCapacity: Int,
 
     @field:NotNull(message = "Current occupied is required")
-    val currentOccupied: Int,
+    var currentOccupied: Int,
 
     @field:NotNull(message = "Status is required")
-    val status: ParkingStatus
+    var status: ParkingStatus
 )
 
 /* =========================
@@ -67,6 +70,19 @@ data class ParkingResponse(
     val status: ParkingStatus,
     val createdAt: LocalDateTime
 )
+
+/* =========================
+   SPECIFICATIONS DTO! (hey copilot that is already fucking great!)
+   ========================= */
+data class ParkingSpecificationsDto(
+    val currentOccupied: RangeFilter? = null,
+    val totalCapacity: RangeFilter? = null,
+    val cityName: StringListFilter? = null,
+    val countryName: StringListFilter? = null,
+    val status: StringListFilter? = null,
+    val createdAt: DateRangeFilter? = null
+)
+
 
 /* =========================
    MAPPER
@@ -108,3 +124,5 @@ fun Parking.merge(parkingUpdate: ParkingUpdate) {
         status = it
     }
 }
+
+

@@ -1,0 +1,75 @@
+[
+  {
+    "tableName": "parkings",
+    "intProperties": [
+      {
+        "prettyName": "Total Capacity",
+        "name": "totalCapacity",
+        "description": "Total parking capacity",
+        "databasePath": "totalCapacity"
+      },
+      {
+        "prettyName": "Current Occupied",
+        "name": "currentOccupied",
+        "description": "Current occupied spaces",
+        "databasePath": "currentOccupied"
+      }
+    ],
+    "stringProperties": [
+      {
+        "prettyName": "City Name",
+        "name": "cityName",
+        "description": "Associated city name",
+        "databasePath": "city.name"
+      },
+      {
+        "prettyName": "Country Name",
+        "name": "countryName",
+        "description": "Associated country name",
+        "databasePath": "city.country.name"
+      }
+    ],
+    "enumProperties": [
+      {
+        "prettyName": "Status",
+        "name": "status",
+        "description": "Parking status (ACTIVE, INACTIVE, MAINTENANCE)",
+        "databasePath": "status",
+        "enumClassFullName": "com.parking.management.features.parking.ParkingStatus"
+      }
+    ]
+  },
+  {
+    "tableName": "countries",
+    "intProperties": [],
+    "stringProperties": [],
+    "enumProperties": []
+  },
+  {
+    "tableName": "cities",
+    "intProperties": [],
+    "stringProperties": [
+      {
+        "prettyName": "Country Name",
+        "name": "countryName",
+        "description": "Associated country name",
+        "databasePath": "country.name"
+      }
+    ],
+    "enumProperties": []
+  },
+  {
+    "tableName": "entry_gates",
+    "intProperties": [],
+    "stringProperties": [
+      {
+        "prettyName": "Direction",
+        "name": "direction",
+        "description": "Gate direction (IN, OUT)",
+        "databasePath": "direction"
+      }
+    ],
+    "enumProperties": []
+  }
+]
+

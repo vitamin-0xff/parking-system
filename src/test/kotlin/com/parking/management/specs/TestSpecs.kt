@@ -140,12 +140,13 @@ class TestSpecs {
 
     @Test
     fun `test join filter with StringFilter on city name`() {
-        val parking_ = repository!!.findAll(SpecsFactory.generalFilterJoin<Parking, com.parking.management.features.city.City>(
-            filters = listOf(FilterJoin(
-                rootFieldName = "city",
-                joinFieldName = "name",
-                filter = StringFilter(value = "Paris")
-            )),
+        val parking_ = repository!!.findAll(SpecsFactory.generalFilterWithPathResolver<Parking>(
+            filters = listOf(
+                FilterObject(
+                    fieldName = "city.name",
+                    filter = StringFilter(value = "Paris")
+                )
+            )
         ))
 
         assert(parking_.all { it.city.name == "Paris" }) { "All parkings should be in Paris" }
@@ -153,12 +154,13 @@ class TestSpecs {
 
     @Test
     fun `test join filter with StringListFilter on city names`() {
-        val parking_ = repository!!.findAll(SpecsFactory.generalFilterJoin<Parking, com.parking.management.features.city.City>(
-            filters = listOf(FilterJoin(
-                rootFieldName = "city",
-                joinFieldName = "name",
-                filter = StringListFilter(listOfStrings = listOf("Paris", "London"))
-            )),
+        val parking_ = repository!!.findAll(SpecsFactory.generalFilterWithPathResolver<Parking>(
+            filters = listOf(
+                FilterObject(
+                    fieldName = "city.name",
+                    filter = StringListFilter(listOfStrings = listOf("Paris", "London"))
+                )
+            )
         ))
         println(parking_)
         assert(parking_.all { it.city.name in listOf("Paris", "London") }) { "All parkings should be in Paris or London" }
@@ -166,12 +168,13 @@ class TestSpecs {
 
     @Test
     fun `test join filter with RangeFilter on city zoom factor`() {
-        val parking_ = repository!!.findAll(SpecsFactory.generalFilterJoin<Parking, com.parking.management.features.city.City>(
-            filters = listOf(FilterJoin(
-                rootFieldName = "city",
-                joinFieldName = "zoomFactor",
-                filter = RangeFilter(5, 15)
-            )),
+        val parking_ = repository!!.findAll(SpecsFactory.generalFilterWithPathResolver<Parking>(
+            filters = listOf(
+                FilterObject(
+                    fieldName = "city.zoomFactor",
+                    filter = RangeFilter(5, 15)
+                )
+            )
         ))
 
         assert(parking_.isNotEmpty()) { "Should find parkings in cities with zoom factor 5-15" }
@@ -179,11 +182,11 @@ class TestSpecs {
 
     @Test
     fun `test join filter with multiple join filters`() {
-        val parking_ = repository!!.findAll(SpecsFactory.generalFilterJoin<Parking, com.parking.management.features.city.City>(
+        val parking_ = repository!!.findAll(SpecsFactory.generalFilterWithPathResolver<Parking>(
             filters = listOf(
-                FilterJoin(rootFieldName = "city", joinFieldName = "name", filter = StringFilter(value = "Paris")),
-                FilterJoin(rootFieldName = "city", joinFieldName = "zoomFactor", filter = RangeFilter(5, 20))
-            ),
+                FilterObject(fieldName = "city.name", filter = StringFilter(value = "Paris")),
+                FilterObject(fieldName = "city.zoomFactor", filter = RangeFilter(5, 20))
+            )
         ))
 
         assert(parking_.all { it.city.name == "Paris" && it.city.zoomFactor in 5..20 }) { "All should match both join conditions" }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.parking.management.comman.models.Message
 import com.parking.management.features.parking.models.ParkingCreate
 import com.parking.management.features.parking.models.ParkingResponse
+import com.parking.management.features.parking.models.ParkingSpecificationsDto
 import com.parking.management.features.parking.models.ParkingUpdate
 import com.parking.management.specifications.Filter
 import com.parking.management.specifications.FilterObject
@@ -49,8 +50,10 @@ class ParkingController(
     fun getAll(
         @PageableDefault(
             size = 20,
-            page = 0) pageable: Pageable, @RequestBody filter: List<FilterObject>? = null): Page<ParkingResponse> {
-        return parkingService.getAll(pageable, filter)
+            page = 0
+        ) pageable: Pageable, @RequestBody filter: ParkingSpecificationsDto? = null
+    ): Page<ParkingResponse> {
+        return parkingService.getAllFilter(pageable, filter)
     }
 
     @PutMapping("/{id}")
@@ -68,7 +71,13 @@ class ParkingController(
         @PathVariable placeId: UUID,
         @PageableDefault(
             size = 20,
-            page = 0) pageable: Pageable): Page<ParkingResponse> {
+            page = 0
+        ) pageable: Pageable
+    ): Page<ParkingResponse> {
         return parkingService.findAllByPlaceId(placeId, pageable)
     }
+
+    @GetMapping("/r/filters")
+    fun getAllFilters() = parkingService.getParkingFilters()
+
 }

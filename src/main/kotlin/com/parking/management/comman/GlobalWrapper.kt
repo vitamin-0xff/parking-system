@@ -1,6 +1,7 @@
 package com.parking.management.comman
 
 import com.parking.management.comman.models.*
+import com.parking.management.ed.events.ErrorsEventDispatcher
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.core.MethodParameter
 import org.springframework.core.Ordered
@@ -27,7 +28,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-class GlobalWrapper : ResponseEntityExceptionHandler(), ResponseBodyAdvice<Any> {
+class GlobalWrappe(
+    val errorDispatcher: ErrorsEventDispatcher
+) : ResponseEntityExceptionHandler(), ResponseBodyAdvice<Any> {
 
     // List of paths you want to EXCLUDE (even if they match included)
     private val excludedPatterns = listOf(
@@ -161,6 +164,7 @@ class GlobalWrapper : ResponseEntityExceptionHandler(), ResponseBodyAdvice<Any> 
     // Fallback
     @ExceptionHandler(Exception::class)
     fun handleAll(e: Exception, req: HttpServletRequest): ResponseEntity<ApiResponse<Nothing>> {
+        errorDispatcher.pushErrorEvent(e)
         return error("INTERNAL_ERROR", "Something went wrong", 500, req.path())
     }
 

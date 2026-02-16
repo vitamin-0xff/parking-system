@@ -1,6 +1,9 @@
 package com.parking.management.features.country.models
 
 import com.parking.management.features.country.Country
+import com.parking.management.specifications.DateRangeFilter
+import com.parking.management.specifications.RangeFilter
+import com.parking.management.specifications.StringListFilter
 import jakarta.validation.constraints.*
 import org.hibernate.validator.constraints.Range
 import java.time.LocalDateTime
@@ -53,8 +56,19 @@ data class CountryResponse(
 )
 
 /* =========================
-   MAPPER
+   SPECIFICATIONS DTO
    ========================= */
+
+data class CountrySpecificationsDto(
+    val names: StringListFilter? = null,
+    val isoCodes: StringListFilter? = null,
+    val zoomFactor: RangeFilter? = null,
+    val createdAt: DateRangeFilter? = null
+)
+
+/* =========================
+    MAPPER
+    ========================= */
 
 object CountryMapper {
 

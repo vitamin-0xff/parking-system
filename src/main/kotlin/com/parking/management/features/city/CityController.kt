@@ -3,6 +3,7 @@ package com.parking.management.features.city
 import com.parking.management.comman.models.Message
 import com.parking.management.features.city.models.CityCreate
 import com.parking.management.features.city.models.CityResponse
+import com.parking.management.features.city.models.CitySpecificationsDto
 import com.parking.management.features.city.models.CityUpdate
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -44,6 +45,16 @@ class CityController(
             size = 20,
             page = 0) pageable: Pageable): Page<CityResponse> {
         return cityService.getAll(pageable)
+    }
+
+    @PostMapping("/instances/all")
+    fun getAllFilter(
+        @PageableDefault(
+            size = 20,
+            page = 0) pageable: Pageable,
+        @RequestBody filter: CitySpecificationsDto? = null
+    ): Page<CityResponse> {
+        return cityService.getAllFilter(pageable, filter)
     }
 
     @PutMapping("/{id}")

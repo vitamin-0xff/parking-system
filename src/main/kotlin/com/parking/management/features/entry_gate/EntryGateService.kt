@@ -2,14 +2,18 @@ package com.parking.management.features.entry_gate
 
 import com.parking.management.comman.models.Message
 import com.parking.management.comman.models.NotFoundException
+import com.parking.management.ed.events.EntryGateEvents
 import com.parking.management.features.entry_gate.models.EntryGateCreate
 import com.parking.management.features.entry_gate.models.EntryGateMapper
 import com.parking.management.features.entry_gate.models.EntryGateResponse
+import com.parking.management.features.entry_gate.models.EntryGateSpecificationsDto
 import com.parking.management.features.entry_gate.models.EntryGateUpdate
 import com.parking.management.features.entry_gate.models.merge
 import com.parking.management.features.parking.ParkingRepository
+import com.parking.management.specifications.SpecsFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
@@ -18,7 +22,8 @@ import java.util.UUID
 @Service
 class EntryGateService(
     val repository: EntryGateRepository,
-    val parkingRepository: ParkingRepository
+    val parkingRepository: ParkingRepository,
+    val entryGateEvents: EntryGateEvents
 ) {
 
     fun create(entryGateCreate: EntryGateCreate): EntryGateResponse {
@@ -30,7 +35,9 @@ class EntryGateService(
             hardwareId = entryGateCreate.hardwareId,
             isActive = entryGateCreate.isActive
         )
-        return EntryGateMapper.toResponse(repository.save(entryGate))
+        val savedEntryGate = repository.save(entryGate)
+        entryGateEvents.publishEntryGateCreated(savedEntryGate.id.toString())
+        return EntryGateMapper.toResponse(savedEntryGate)
     }
 
     fun createList(entryGatesCreate: List<EntryGateCreate>): List<EntryGateResponse> {
@@ -44,7 +51,9 @@ class EntryGateService(
                 isActive = it.isActive
             )
         }
-        return repository.saveAll(entryGates).map { EntryGateMapper.toResponse(it) }
+        val savedEntryGates = repository.saveAll(entryGates)
+        savedEntryGates.forEach { entryGateEvents.publishEntryGateCreated(it.id.toString()) }
+        return savedEntryGates.map { EntryGateMapper.toResponse(it) }
     }
 
     @Transactional(readOnly = true)
@@ -57,6 +66,20 @@ class EntryGateService(
         return repository.findAll(pageable).map { EntryGateMapper.toResponse(it) }
     }
 
+    @Transactional(readOnly = true)
+    fun getAllFilter(pageable: Pageable, filterList: EntryGateSpecificationsDto? = null): Page<EntryGateResponse> {
+        if (filterList == null) return repository.findAll(pageable).map { EntryGateMapper.toResponse(it) }
+        val filters = mutableListOf<Specification<EntryGate>>()
+        filterList.names?.let { SpecsFactory.entryGateByNames(it.listOfStrings)?.let(filters::add) }
+        filterList.directions?.let { SpecsFactory.entryGateByDirections(it)?.let(filters::add) }
+        filterList.hardwareIds?.let { SpecsFactory.entryGateByHardwareIds(it.listOfStrings)?.let(filters::add) }
+        filterList.isActive?.let { filters.add(SpecsFactory.entryGateByIsActive(it)) }
+        filterList.parkingIds?.let { SpecsFactory.entryGateByParkingIds(it)?.let(filters::add) }
+        filterList.createdAt?.let { filters.add(SpecsFactory.entryGateByCreatedAtRange(it.start, it.end)) }
+        if (filters.isEmpty()) return repository.findAll(pageable).map { EntryGateMapper.toResponse(it) }
+        return repository.findAll(Specification.allOf(*filters.toTypedArray()), pageable).map { EntryGateMapper.toResponse(it) }
+    }
+
     fun update(entryGateId: UUID, entryGateUpdate: EntryGateUpdate): EntryGateResponse {
         val entryGate = repository.findById(entryGateId).orElseThrow { NotFoundException("$entryGateId EntryGate not exists") }
         entryGate.merge(entryGateUpdate)
@@ -64,12 +87,15 @@ class EntryGateService(
             val parking = parkingRepository.findById(it).orElseThrow { NotFoundException("Parking with id $it not found") }
             entryGate.parking = parking
         }
-        return EntryGateMapper.toResponse(repository.save(entryGate))
+        val updatedEntryGate = repository.save(entryGate)
+        entryGateEvents.publishEntryGateUpdated(updatedEntryGate.id.toString())
+        return EntryGateMapper.toResponse(updatedEntryGate)
     }
 
     fun delete(entryGateId: UUID): Message {
         val entryGate = repository.findById(entryGateId).orElseThrow { NotFoundException("$entryGateId EntryGate not exists") }
         repository.delete(entryGate)
+        entryGateEvents.publishEntryGateDeleted(entryGateId.toString())
         return Message("EntryGate deleted successfully")
     }
 

@@ -3,6 +3,7 @@ package com.parking.management.features.entry_gate
 import com.parking.management.comman.models.Message
 import com.parking.management.features.entry_gate.models.EntryGateCreate
 import com.parking.management.features.entry_gate.models.EntryGateResponse
+import com.parking.management.features.entry_gate.models.EntryGateSpecificationsDto
 import com.parking.management.features.entry_gate.models.EntryGateUpdate
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -44,6 +45,16 @@ class EntryGateController(
             size = 20,
             page = 0) pageable: Pageable): Page<EntryGateResponse> {
         return entryGateService.getAll(pageable)
+    }
+
+    @PostMapping("/instances/all")
+    fun getAllFilter(
+        @PageableDefault(
+            size = 20,
+            page = 0) pageable: Pageable,
+        @RequestBody filter: EntryGateSpecificationsDto? = null
+    ): Page<EntryGateResponse> {
+        return entryGateService.getAllFilter(pageable, filter)
     }
 
     @PutMapping("/{id}")

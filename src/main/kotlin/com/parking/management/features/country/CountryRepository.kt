@@ -2,11 +2,12 @@ package com.parking.management.features.country
 
 import com.parking.management.features.country.models.CountryFuzzySearchResponse
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.util.UUID
 
-interface CountryRepository : JpaRepository<Country, UUID> {
+interface CountryRepository : JpaRepository<Country, UUID>, JpaSpecificationExecutor<Country> {
     fun findByName(name: String): Country?
     fun findByIsoCode(isoCode: String): Country?
     fun existsByIsoCode(isoCode: String): Boolean

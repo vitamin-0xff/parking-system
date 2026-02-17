@@ -96,6 +96,8 @@ class ParkingService(
         filterList.cityName?.let { SpecsFactory.parkingByCityNames(it.listOfStrings)?.let(filters::add) }
         filterList.countryName?.let { SpecsFactory.parkingByCountryNames(it.listOfStrings)?.let(filters::add) }
         filterList.createdAt?.let { filters.add(SpecsFactory.parkingByCreatedAtRange(it.start, it.end)) }
+        filterList.status?.let { filters.add(SpecsFactory.parkingByStatus(it.listOfStrings)) }
+
         if (filters.isEmpty()) return repository.findAll(pageable).map { ParkingMapper.toResponse(it) }
         return repository.findAll(Specification.allOf(*filters.toTypedArray()), pageable).map { ParkingMapper.toResponse(it) }
     }

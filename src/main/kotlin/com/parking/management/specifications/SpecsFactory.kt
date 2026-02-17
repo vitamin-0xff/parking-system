@@ -7,6 +7,7 @@ import com.parking.management.features.country.Country
 import com.parking.management.features.entry_gate.EntryGate
 import com.parking.management.features.entry_gate.EntryGateDirection
 import com.parking.management.features.parking.Parking
+import com.parking.management.features.parking.ParkingStatus
 import jakarta.persistence.criteria.Expression
 import jakarta.persistence.criteria.From
 import jakarta.persistence.criteria.JoinType
@@ -48,7 +49,6 @@ data class StringFilter(
 
 data class StringListFilter(
     val listOfStrings: List<String>,
-    val id: Int = 3,
 ): Filter()
 
 data class DateRangeFilter(
@@ -82,6 +82,14 @@ object SpecsFactory {
             } else {
                 cb.between(root.get("currentOccupied"), start, end)
             }
+        }
+    }
+
+    // Current Occupied Filters
+    fun parkingByStatus(statusEnum: List<String>): Specification<Parking> {
+        if(statusEnum.isEmpty()) return Specification { _, _, _ -> null }
+        return Specification { root, _, cb ->
+            root.get<ParkingStatus>("status").`in`(statusEnum.map { ParkingStatus.valueOf(it) })
         }
     }
 
